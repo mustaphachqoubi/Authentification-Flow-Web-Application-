@@ -1,0 +1,27 @@
+import "./App.css";
+import { TermsAndServicesSection } from "./components/TermsAndServicesSection.jsx";
+import { AuthHeader } from "./components/AuthHeader.jsx";
+import { Login } from './components/Login.jsx'
+
+function App() {
+  return (
+    <div className="font-sans flex justify-center items-center flex-col md:flex-row w-full h-screen">
+      <div className="bg-black/30 blur-lg overflow-hidden w-full h-full md:w-[30vw] z-50 absolute md:static top-0 left-0 self-end flex-col divide-y gap-2 p-8 ">
+        <AuthHeader />
+
+        <div className=" w-full p-4">
+
+          <Login></Login>
+
+        </div>
+
+        <TermsAndServicesSection></TermsAndServicesSection>
+      </div>
+      <div className="w-full h-full md:w-[70vw] absolute top-0 left-0 bg-yellow-500 z-0 md:static flex justify-center items-center ">
+        section2
+      </div>
+    </div>
+  );
+}
+
+export default App;
