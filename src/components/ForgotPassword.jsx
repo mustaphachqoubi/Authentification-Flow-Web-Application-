@@ -1,0 +1,95 @@
+import { Label } from "./Label.jsx";
+import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { setAuthType } from "../redux/authTypeSlice";
+
+export const ForgotPassword = () => {
+  const dispatch = useDispatch();
+
+  const handleSignIn = () => {
+    dispatch(setAuthType("signin"));
+  };
+
+  const [step, setStep] = useState(2);
+
+  const handleInput = (e) => {
+    e.preventDefault()
+    console.log(e.target.value)
+  }
+
+  return (
+    <div className="flex flex-col w-full h-full text-black ">
+      <form className="flex flex-col gap-4">
+        {step === 1 ? (
+          <Label
+            className=""
+            name="Confirmation email"
+            required={true}
+            type="email"
+            placeholder="example@gmail.com"
+          ></Label>
+        ) : step === 2 ? (
+          <form onSubmit={handleInput}  className="flex flex-col justify-center items-center gap-2 py-4">
+            <h3 className="font-bold w-full">Security code</h3>
+              <div className="flex gap-2">
+                <Label
+              handleInput={handleInput}
+              className="code p-[0.9rem] rounded-lg w-10 h-10 bg-gray-200 font-normal text-md text-gray-500 focus:outline-[#e80041]"
+              name=""
+              required={true}
+              type="code"
+            />
+            <Label
+                disabled={true}
+              handleInput={handleInput}
+              className="code p-[0.9rem] rounded-lg w-10 h-10 bg-gray-200 font-normal text-md text-gray-500 focus:outline-[#e80041]"
+              name=""
+              required={true}
+              type="code"
+            />
+            <Label
+                disabled={true}
+              handleInput={handleInput}
+              className="code p-[0.9rem] rounded-lg w-10 h-10 bg-gray-200 font-normal text-md text-gray-500 focus:outline-[#e80041]"
+              name=""
+              required={true}
+              type="code"
+            />
+            <Label
+                disabled={true}
+              handleInput={handleInput}
+              className="code p-[0.9rem] rounded-lg w-10 h-10 bg-gray-200 font-normal text-md text-gray-500 focus:outline-[#e80041]"
+              name=""
+              required={true}
+              type="code"
+            />
+              </div> 
+            </form>
+        ) : (
+        <Label
+            className=""
+            name="New Password"
+            required={true}
+            type="password"
+            placeholder="****"
+          ></Label>
+        )
+        }
+
+        <Label
+          className="w-full cursor-pointer rounded-md p-2 bg-gradient-to-r hover:bg-gradient-to-l from-[#e80041] to-[#f74e46]  text-white font-normal text-md focus:outline-none"
+          name=""
+          required={true}
+          type="submit"
+          value={step === 1 ? "Next" : step === 2 ? "Confirm" : "Change"}
+        ></Label>
+        <div className="flex justify-center gap-2 cursor-pointer text-sm text-blue-500 font-normal">
+          Back to?
+          <h3 className="underline hover:no-underline" onClick={handleSignIn}>
+            Sign In
+          </h3>
+        </div>
+      </form>
+    </div>
+  );
+};

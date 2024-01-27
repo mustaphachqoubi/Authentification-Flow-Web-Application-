@@ -7,3 +7,18 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.slider{
+  animation: scroll 15s linear infinite;
+}
+
+@keyframes scroll {
+	0% { 
+  transform: translateX(0); 
+  transform: translateY(0); 
+}
+	100% { 
+  transform: translateX(calc(-250px * 7));
+  transform: translateY(calc(-250px) * 7);
+}
+}
