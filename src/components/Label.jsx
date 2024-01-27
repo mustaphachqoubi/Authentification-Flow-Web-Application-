@@ -1,4 +1,4 @@
-export const Label = ({ name, required, type, placeholder, className, disabled, children, value, handleInput }) => {
+export const Label = ({ name, required, type, placeholder, className, children, value, handleInput }) => {
   //         onChange={(e) => handleInput(e.target.value)}
 //         disabled={disabled === undefined || disabled === null || disabled === "" ? false : true}
 
@@ -6,7 +6,8 @@ export const Label = ({ name, required, type, placeholder, className, disabled, 
   <label className="flex flex-col font-semibold gap-1">
           {name}
           <input
-        maxlength={type === "code" ? 1 : 5000}
+        onChange={() => console.log("")}
+        maxLength={type === "code" ? 1 : 5000}
           value={type === "submit" ? value : null}
             required={required}
             type={type}

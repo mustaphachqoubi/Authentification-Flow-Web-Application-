@@ -1,52 +1,38 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { Pics } from "../../public/Pics.js";
 
 export const HeroBanner = () => {
-  const api =
-    "https://api.rawg.io/api/platforms?key=dfd7125c549a402798b4303017d5b598";
-  const [games, setGames] = useState([]);
+  Pics.map((pic) => console.log(pic.url));
 
-  const getPictues = async () => {
-    const local_api = await api;
-    axios
-      .get(local_api)
-      .then((res) => setGames(res.data.results))
-      .catch((err) => console.error(err));
+  const renderSliders = () => {
+    const sliders = [];
+
+    for (let i = 0; i < 4; i++) {
+      sliders.push(
+        <div className="w-full h-52 flex justify-start items-center gap-3 p-4 relative whitespace-nowrap rotate-12">
+          {Pics.map((pic, index) => (
+            <div className="w-full h-full relative flex justify-center items-center">
+              <img
+                className="min-w-52 h-full rounded-lg slider bg-[#e80041] z-50"
+                src={pic.url}
+              />
+
+              <div className="bg-black/30 blur-lg min-w-60 h-full absolute slider top-0 z-10"></div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return sliders;
   };
 
-  useEffect(() => {
-    getPictues();
-  });
-
   return (
-    <div className="flex justify-center items-center gap-4 h-full">
-      {games.length < 1 ? (
-      <div>
-          <ClipLoader color={"black"} size={50} />
-        </div>
-      ) : games.map((game) => (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 slider">
-            <div key={game.id} className="w-48 h-48 overflow-hidden rounded-lg">
-              <img className="w-full h-full" src={game.image_background} />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 slider">
-            <div key={game.id} className="w-48 h-48 overflow-hidden rounded-lg">
-              <img className="w-full h-full" src={game.image_background} />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 slider">
-            <div key={game.id} className="w-48 h-48 overflow-hidden rounded-lg">
-              <img className="w-full h-full" src={game.image_background} />
-            </div>
-          </div>
-
-        </div>
-      ))}
+    <div className="flex flex-col  gap-3 relative w-full h-full">
+      {renderSliders()}
+      <div className="hidden md:flex absolute -right-32 -top-10 w-48 h-[200vh] bg-white blur-lg"></div>
+      <div className="hidden md:flex absolute -left-32 -top-10  w-48 h-[200vh] bg-white blur-lg"></div>
     </div>
   );
 };
