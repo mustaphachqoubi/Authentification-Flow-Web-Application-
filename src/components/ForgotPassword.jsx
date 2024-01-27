@@ -11,7 +11,7 @@ export const ForgotPassword = () => {
     dispatch(setAuthType("signin"));
   };
 
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   const handleInput = (e) => {
     e.preventDefault()

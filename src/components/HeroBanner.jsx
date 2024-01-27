@@ -4,7 +4,6 @@ import { ClipLoader } from "react-spinners";
 import { Pics } from "../../public/Pics.js";
 
 export const HeroBanner = () => {
-  Pics.map((pic) => console.log(pic.url));
 
   const renderSliders = () => {
     const sliders = [];
@@ -18,7 +17,6 @@ export const HeroBanner = () => {
                 className="min-w-52 h-full rounded-lg slider bg-[#e80041] z-50"
                 src={pic.url}
               />
-
               <div className="bg-black/30 blur-lg min-w-60 h-full absolute slider top-0 z-10"></div>
             </div>
           ))}
@@ -31,7 +29,6 @@ export const HeroBanner = () => {
   return (
     <div className="flex flex-col  gap-3 relative w-full h-full">
       {renderSliders()}
-      <div className="hidden md:flex absolute -right-32 -top-10 w-48 h-[200vh] bg-white blur-lg"></div>
       <div className="hidden md:flex absolute -left-32 -top-10  w-48 h-[200vh] bg-white blur-lg"></div>
     </div>
   );

@@ -14,8 +14,9 @@ function App() {
   const authType = useSelector((state) => state.authType.value)
 
   return (
-    <div className="overflow-scroll font-sans flex justify-center items-center flex-col md:flex-row h-screen">
-      <div className="overflow-hidden md:bg-white flex justify-center w-full h-full md:w-[50vw] lg:w-[40vw] xl:w-[30vw] z-50 relative md:static top-0 left-0 self-end flex-col divide-y gap-2 p-8 ">
+    <div className="font-sans flex justify-end items-center h-screen flex-col md:flex-row h-100">
+      <div className="overflow-scroll md:bg-white flex justify-center items-center w-full h-full md:w-[50vw] lg:w-[40vw] xl:w-[30vw] z-50
+        absolute  top-0 left-0 self-end flex-col divide-y gap-2 p-8 ">
         <AuthHeader />
 
         <div className=" w-full p-4 flex-1">
@@ -33,7 +34,8 @@ function App() {
         <TermsAndServicesSection></TermsAndServicesSection>
       </div>
 
-      <div className="overflow-hidden bg-white md:bg-white blur-sm md:blur-none w-full h-full md:w-[70vw] absolute top-0 left-0 z-0 md:static flex justify-center items-center">
+      <div className="overflow-hidden bg-white md:bg-white blur-sm md:blur-none
+        w-full h-screen md:h-full md:w-[70vw] absolute top-0 left-0 z-0 md:static flex justify-center items-center">
        <HeroBanner></HeroBanner>
       </div>
     </div>
