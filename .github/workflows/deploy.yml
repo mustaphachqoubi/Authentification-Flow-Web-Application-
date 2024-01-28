@@ -36,4 +36,4 @@ jobs:
         with:
           project: "long-alligator-15"
           entrypoint: "https://deno.land/std@0.188.0/http/file_server.ts" # 📝 Update the entrypoint if necessary
-          root: "dist" # 📝 Update the root if necessary
+          root: "./backend" # 📝 Update the root if necessary
