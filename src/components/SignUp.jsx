@@ -8,12 +8,17 @@ export const SignUp = () => {
   const handleSignIn = () => {
     dispatch(setAuthType("signin"))
   }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+  }
+
   return (
     <div className="flex flex-col w-full h-full text-black ">
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Label
           className=""
-          name="Name"
+          name="Username"
           required={true}
           type="text"
           placeholder="mustapha chqoubi"

@@ -19,12 +19,15 @@ export const ForgotPassword = () => {
   }
 
   const handleSubmit = (e) => {
-    console.log(e)
+    e.preventDefault()
+    step === 1 ? setStep(2) : setStep(3)
   }
 
   return (
     <div className="flex flex-col w-full h-full text-black ">
-      <form className="flex flex-col gap-4">
+      <form 
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4">
         {step === 1 ? (
           <Label
             className=""
@@ -79,7 +82,6 @@ export const ForgotPassword = () => {
           type="submit"
           className="w-full cursor-pointer rounded-md p-2 bg-gradient-to-r hover:bg-gradient-to-l from-[#e80041] to-[#f74e46]  text-white font-normal text-md focus:outline-none"
           name=""
-          onSubmit={handleSubmit}
           >
             {step === 1 ? "Next" : step === 2 ? "Confirm" : step === 3 ? "Change" : (<ClipLoader color={"white"} size={20}/>)}
           </button>
