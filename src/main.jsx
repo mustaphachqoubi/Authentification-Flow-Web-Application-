@@ -7,18 +7,24 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Home } from "./components/Home.jsx";
 import { Terms } from "./components/Terms.jsx";
 import { Contacts } from "./components/Contacts.jsx";
+import AuthProvider from "react-auth-kit";
+import {authstore} from './auth/store.js'
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route index path="/" element={<App />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/contacts" element={<Contacts />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider 
+       store={authstore} 
+      >
+        <BrowserRouter>
+          <Routes>
+            <Route index path="/" element={<App />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/contacts" element={<Contacts />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </Provider>
   </React.StrictMode>
 );
