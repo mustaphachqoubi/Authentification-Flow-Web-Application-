@@ -30,8 +30,9 @@ export const Login = () => {
   };
 
   const onSubmit = async (values) => {
+      setLoader(true)
     try {
-      const res = await axios.post("http://localhost:2000/auth/signin", values);
+      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signin", values);
       signIn({
         auth: {
           token: res.data.token,
@@ -39,10 +40,12 @@ export const Login = () => {
         },
         userState: { Email: values.Email },
       });
+      setLoader(false)
       setPasswordStatus("success");
       setEmailStatus("success");
       navigate("/home");
     } catch (err) {
+      setLoader(false)
       err.response.data.error === "wrong password" && setPasswordStatus("fail");
       err.response.data.error === "There is no such email" &&
         setEmailStatus("fail");

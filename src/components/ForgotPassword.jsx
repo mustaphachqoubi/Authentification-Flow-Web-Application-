@@ -31,16 +31,19 @@ export const ForgotPassword = () => {
   };
 
   const onSubmit = async (values) => {
+    setLoader(true)
     if (step === 1) {
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/email",
+          "https://auth-9xaz.onrender.com/auth/forgetpassword/email",
           values
         );
+            setLoader(false)
         console.log(res.data.user.Code)
         setEmailErr(null);
         setStep(2);
       } catch (err) {
+            setLoader(false)
         setEmailErr(err);
       }
     }
@@ -52,12 +55,14 @@ export const ForgotPassword = () => {
       );
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/code",
+          "https://auth-9xaz.onrender.com/auth/forgetpassword/code",
           { Email: values.Email, Code: combinedCode }
         );
+            setLoader(false)
         setCodeErr(false);
         setStep(3);
       } catch (err) {
+            setLoader(false)
         setCodeErr(err);
       }
     }
@@ -65,12 +70,14 @@ export const ForgotPassword = () => {
     if (step === 3) {
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/newpassword",
+          "https://auth-9xaz.onrender.com/auth/forgetpassword/newpassword",
           { Email: values.Email, Password: values.Password }
         );
+            setLoader(false)
         setPasswordState("sucess");
         setStep(4);
       } catch (err) {
+            setLoader(false)
         setPasswordErr("fail");
       }
     }

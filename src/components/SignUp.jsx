@@ -24,15 +24,17 @@ export const SignUp = () => {
   };
 
   const onSubmit = async (values) => {
+    setLoader(true);
     try {
-      const res = await axios.post("http://localhost:2000/auth/signup", values);
+      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signup", values);
+      setLoader(false);
       if (res.data.message === "User registered successfully") {
         setSuccess(true);
       } else {
         setSuccess(false);
       }
     } catch (err) {
-      console.log(err);
+      setLoader(false);
       setSuccess(false);
     }
   };
@@ -89,12 +91,14 @@ export const SignUp = () => {
           </h3>
         ) : null}
 
-        <input
+        <button
           className="w-full cursor-pointer rounded-md p-2 bg-gradient-to-r hover:bg-gradient-to-l from-[#e80041] to-[#f74e46]  text-white font-normal text-md focus:outline-none"
           name=""
           required={true}
           type="submit"
-        ></input>
+        >
+          {loader ? <ClipLoader color={"white"} size={20} /> : "Sign Up"}
+        </button>
         <div className="flex justify-center gap-2 cursor-pointer text-sm text-blue-500 font-normal">
           Have an account?
           <h3 className="underline hover:no-underline" onClick={handleSignIn}>
