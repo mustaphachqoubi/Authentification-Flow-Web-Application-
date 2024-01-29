@@ -1,51 +1,67 @@
 import { Label } from "./Label.jsx";
-import { useDispatch } from 'react-redux'
-import { setAuthType } from "../redux/authTypeSlice.js"
-import { Formik, useFormik } from 'formik';
-import axios from 'axios'
+import { useDispatch } from "react-redux";
+import { setAuthType } from "../redux/authTypeSlice.js";
+import { Formik, useFormik } from "formik";
+import axios from "axios";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { useState, useEffect } from "react";
+import { ClipLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
+  const dispatch = useDispatch();
+  const signIn = useSignIn();
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch()
+  const [emailStatus, setEmailStatus] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState("");
+  const [loader, setLoader] = useState(false);
 
   const handleSignIn = () => {
-    dispatch(setAuthType("signup"))
-  }
+    dispatch(setAuthType("signup"));
+  };
 
   const handleForgotPass = () => {
-    dispatch(setAuthType("forgotpass"))
-  }
+    dispatch(setAuthType("forgotpass"));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
   const onSubmit = async (values) => {
-    console.log(values)
-
-    try{
-      const res = await axios.post(
-        "http://localhost:2000/auth/signin",
-        values
-      )
-      console.log(res)
+    try {
+      const res = await axios.post("http://localhost:2000/auth/signin", values);
+      signIn({
+        auth: {
+          token: res.data.token,
+          type: "Bearer",
+        },
+        userState: { Email: values.Email },
+      });
+      setPasswordStatus("success");
+      setEmailStatus("success");
+      navigate("/home");
     } catch (err) {
-      console.log(err)
+      err.response.data.error === "wrong password" && setPasswordStatus("fail");
+      err.response.data.error === "There is no such email" &&
+        setEmailStatus("fail");
     }
-  }
+  };
 
   const formik = useFormik({
-     initialValues: {
-       Email: '',
-       Password: '',
-     },
-     onSubmit
+    initialValues: {
+      Email: "",
+      Password: "",
+    },
+    onSubmit,
   });
 
   return (
     <div className="flex flex-col w-full h-full text-black ">
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Label
+          title="Email"
           className=""
           name="Email"
           required={true}
@@ -55,6 +71,7 @@ export const Login = () => {
           value={formik.values.Email}
         ></Label>
         <Label
+          title="Password"
           className=""
           name="Password"
           required={true}
@@ -62,23 +79,38 @@ export const Login = () => {
           placeholder="*****"
           onchange={formik.handleChange}
           value={formik.values.Password}
-
         >
-          <h3 onClick={handleForgotPass} className="cursor-pointer text-sm text-blue-500 hover:text-blue-300 font-normal">
+          <h3
+            onClick={handleForgotPass}
+            className="cursor-pointer text-sm text-blue-500 hover:text-blue-300 font-normal"
+          >
             Forgot your password?
           </h3>
         </Label>
-        <input
+
+        {passwordStatus === "fail" ? (
+          <h3 className="text-red-500 font-bold text-center">Wrong password</h3>
+        ) : emailStatus === "fail" ? (
+          <h3 className="text-red-500 font-bold text-center">No such email</h3>
+        ) : null}
+
+        <button
           className="w-full cursor-pointer rounded-md p-2 bg-gradient-to-r hover:bg-gradient-to-l from-[#e80041] to-[#f74e46]  text-white font-normal text-md focus:outline-none"
           name=""
           required={true}
           type="submit"
-          value="Sign In"
         >
-        </input>
+          {loader === true ? (
+            <ClipLoader color={"white"} size={20} />
+          ) : (
+            "Sign In"
+          )}
+        </button>
         <div className="flex justify-center gap-2 cursor-pointer text-sm text-blue-500 font-normal">
           Need an account?
-          <h3 className="underline hover:no-underline" onClick={handleSignIn}>Sign Up</h3>
+          <h3 className="underline hover:no-underline" onClick={handleSignIn}>
+            Sign Up
+          </h3>
         </div>
       </form>
     </div>

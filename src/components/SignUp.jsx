@@ -1,65 +1,76 @@
 import { Label } from "./Label.jsx";
-import { useSelector, useDispatch } from 'react-redux'
-import { setAuthType } from "../redux/authTypeSlice"
-import { Formik, useFormik } from 'formik';
-import axios from 'axios'
+import { useSelector, useDispatch } from "react-redux";
+import { setAuthType } from "../redux/authTypeSlice";
+import { Formik, useFormik } from "formik";
+import axios from "axios";
+import { ClipLoader } from "react-spinners";
+import { useState } from "react";
 
 export const SignUp = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isUsernameValid, setIsUsernameValid] = useState(true);
+  const [isPasswordValid, setIsPasswordValid] = useState(null);
+  const [loader, setLoader] = useState(false);
+  const [sucess, setSuccess] = useState(null);
 
   const handleSignIn = () => {
-    dispatch(setAuthType("signin"))
-  }
+    dispatch(setAuthType("signin"));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
   const onSubmit = async (values) => {
-    console.log(values)
-
-    try{
-      const res = await axios.post(
-        "http://localhost:2000/auth/signup",
-        values
-      )
-      console.log(res)
+    try {
+      const res = await axios.post("http://localhost:2000/auth/signup", values);
+      if (res.data.message === "User registered successfully") {
+        setSuccess(true);
+      } else {
+        setSuccess(false);
+      }
     } catch (err) {
-      console.log(err)
+      console.log(err);
+      setSuccess(false);
     }
-  }
+  };
 
   const formik = useFormik({
-     initialValues: {
-      Username: '',
-       Email: '',
-       Password: '',
-     },
-     onSubmit
+    initialValues: {
+      Username: "",
+      Email: "",
+      Password: "",
+    },
+    onSubmit,
   });
 
   return (
     <div className="flex flex-col w-full h-full text-black ">
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
         <Label
+          title="User name"
           className=""
           name="Username"
           required={true}
           type="text"
           placeholder="mustapha chqoubi"
-           onchange={formik.handleChange}
+          onchange={formik.handleChange}
           value={formik.values.Username}
         ></Label>
         <Label
+          title="Email"
           className=""
           name="Email"
           required={true}
           type="email"
           placeholder="example@gmail.com"
-                    onchange={formik.handleChange}
+          onchange={formik.handleChange}
           value={formik.values.Email}
         ></Label>
         <Label
+          title="Password"
           className=""
           name="Password"
           required={true}
@@ -68,6 +79,16 @@ export const SignUp = () => {
           onchange={formik.handleChange}
           value={formik.values.Password}
         ></Label>
+        {sucess === true ? (
+          <h3 className="text-green-500 font-bold flex justify-center items-center">
+            User registered successfully
+          </h3>
+        ) : sucess === false ? (
+          <h3 className="text-red-500 font-bold flex justify-center items-center text-center">
+            Something went wrong, try again!
+          </h3>
+        ) : null}
+
         <input
           className="w-full cursor-pointer rounded-md p-2 bg-gradient-to-r hover:bg-gradient-to-l from-[#e80041] to-[#f74e46]  text-white font-normal text-md focus:outline-none"
           name=""
@@ -76,7 +97,9 @@ export const SignUp = () => {
         ></input>
         <div className="flex justify-center gap-2 cursor-pointer text-sm text-blue-500 font-normal">
           Have an account?
-          <h3 className="underline hover:no-underline" onClick={handleSignIn}>Sign In</h3>
+          <h3 className="underline hover:no-underline" onClick={handleSignIn}>
+            Sign In
+          </h3>
         </div>
       </form>
     </div>

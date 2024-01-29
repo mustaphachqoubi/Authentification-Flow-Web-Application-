@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const ForgetPassword = require("./ForgetPassword");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -15,11 +16,10 @@ router.post("/signup", async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(Password, 10);
     const user = new User({ Username, Email, Password: hashedPassword });
-    console.log(user)
+    console.log(user);
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: "Registration failed" });
   }
 });
@@ -30,11 +30,11 @@ router.post("/signin", async (req, res) => {
     const { Email, Password } = req.body;
     const user = await User.findOne({ Email });
     if (!user) {
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ error: "There is no such email" });
     }
     const passwordMatch = await bcrypt.compare(Password, user.Password);
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ error: "wrong password" });
     }
 
     const token = jwt.sign(
@@ -47,6 +47,92 @@ router.post("/signin", async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ error: "Login failed" });
+  }
+});
+
+// forget password email
+router.post("/forgetpassword/email", async (req, res) => {
+  try {
+    const { Email } = req.body;
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(401).json({ error: "no user" });
+    }
+
+    const code = Math.floor(Math.random() * 9000 + 1000);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $set: { Code: code } },
+      { new: true }
+    );
+
+    const token = jwt.sign(
+      { id: updatedUser._id, email: updatedUser.Email },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ user: updatedUser, token });
+  } catch (err) {
+    res.status(500).json({ error: "failed" });
+  }
+});
+
+// forget password code
+router.post("/forgetpassword/code", async (req, res) => {
+  try {
+    const { Email, Code } = req.body;
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(401).json({ error: "no user" });
+    }
+
+    if (user.Code !== Code) {
+      return res.status(401).json({ error: "incorrect code" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.Email },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+    res.status(200).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: "failed" });
+  }
+});
+
+// forget password new pass
+router.post("/forgetpassword/newpassword", async (req, res) => {
+  try {
+    const { Email, Password } = req.body;
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(401).json({ error: "no user" });
+    }
+
+    const hashedPassword = await bcrypt.hash(Password, 10);
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $set: { Password: hashedPassword } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(500).json({ error: "failed to update password" });
+    }
+    const token = jwt.sign(
+      { id: user._id, email: user.Email },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+    res.status(200).json({ token });
+  } catch (err) {
+    res.status(500).json({ error: "failed" });
   }
 });
 
