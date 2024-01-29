@@ -1,17 +1,14 @@
 import { Label } from "./Label.jsx";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setAuthType } from "../redux/authTypeSlice";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useState } from "react";
 
 export const SignUp = () => {
   const dispatch = useDispatch();
-
-  const [isEmailValid, setIsEmailValid] = useState(true);
-  const [isUsernameValid, setIsUsernameValid] = useState(true);
-  const [isPasswordValid, setIsPasswordValid] = useState(null);
+  
   const [loader, setLoader] = useState(false);
   const [sucess, setSuccess] = useState(null);
 
@@ -26,7 +23,7 @@ export const SignUp = () => {
   const onSubmit = async (values) => {
     setLoader(true);
     try {
-      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signup", values);
+      const res = await axios.post("http://localhost:2000/auth/signup", values);
       setLoader(false);
       if (res.data.message === "User registered successfully") {
         setSuccess(true);

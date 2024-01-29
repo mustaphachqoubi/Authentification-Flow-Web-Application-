@@ -4,6 +4,7 @@ const User = require("../models/User");
 const ForgetPassword = require("./ForgetPassword");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const emailjs = require("@emailjs/nodejs");
 
 require("dotenv").config();
 
@@ -67,6 +68,25 @@ router.post("/forgetpassword/email", async (req, res) => {
       { $set: { Code: code } },
       { new: true }
     );
+
+    emailjs.send(
+      "service_tw474m5",
+      "template_a6sps07",
+      { Username: updatedUser.Username, Code: updatedUser.Code, Email: updatedUser.Email },
+      {
+        publicKey: "oqImZpAIUPtDbRdJS",
+        privateKey: "IG7ti-qjHbRy2NXOewbDK",
+      }
+    )  .then(
+    (response) => {
+    }
+  )
+  .catch(
+    (error) => {
+          console.log(error.text)
+    }
+  )
+    ;
 
     const token = jwt.sign(
       { id: updatedUser._id, email: updatedUser.Email },

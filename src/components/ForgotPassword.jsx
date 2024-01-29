@@ -1,9 +1,9 @@
 import { Label } from "./Label.jsx";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAuthType } from "../redux/authTypeSlice";
 import { ClipLoader } from "react-spinners";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import axios from "axios";
 
 export const ForgotPassword = () => {
@@ -14,37 +14,27 @@ export const ForgotPassword = () => {
   };
 
   const [step, setStep] = useState(1);
-  const [isEmailValid, setIsEmailValid] = useState(true);
-  const [isCodeValid, setIsCodeValid] = useState(true);
-  const [isNewPasswordSet, setIsNewPasswordSet] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [emailErr, setEmailErr] = useState(null);
+  const [emailStatus, setEmailStatus] = useState("");
   const [codeErr, setCodeErr] = useState(null);
   const [passwordState, setPasswordState] = useState("");
-
-  const handleInput = (e) => {
-    e.preventDefault();
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
 
   const onSubmit = async (values) => {
     setLoader(true)
     if (step === 1) {
       try {
         const res = await axios.post(
-          "https://auth-9xaz.onrender.com/auth/forgetpassword/email",
+          "http://localhost:2000/auth/forgetpassword/email",
           values
         );
             setLoader(false)
-        console.log(res.data.user.Code)
-        setEmailErr(null);
+        setEmailStatus(null);
+        setEmailStatus("success")
         setStep(2);
       } catch (err) {
+        err.response.data.error === "no user" && setEmailStatus("fail")
+        console.log(err)
             setLoader(false)
-        setEmailErr(err);
       }
     }
 
@@ -55,7 +45,7 @@ export const ForgotPassword = () => {
       );
       try {
         const res = await axios.post(
-          "https://auth-9xaz.onrender.com/auth/forgetpassword/code",
+          "http://localhost:2000/auth/forgetpassword/code",
           { Email: values.Email, Code: combinedCode }
         );
             setLoader(false)
@@ -70,7 +60,7 @@ export const ForgotPassword = () => {
     if (step === 3) {
       try {
         const res = await axios.post(
-          "https://auth-9xaz.onrender.com/auth/forgetpassword/newpassword",
+          "http://localhost:2000/auth/forgetpassword/newpassword",
           { Email: values.Email, Password: values.Password }
         );
             setLoader(false)
@@ -78,7 +68,6 @@ export const ForgotPassword = () => {
         setStep(4);
       } catch (err) {
             setLoader(false)
-        setPasswordErr("fail");
       }
     }
 
@@ -113,7 +102,7 @@ export const ForgotPassword = () => {
             onchange={formik.handleChange}
             value={formik.values.Email}
           >
-            {emailErr?.response.data.error === "no user" ? (
+            {emailStatus === "fail" ? (
               <h3 className="text-red-500 font-bold flex justify-center items-center">
                 Email is not valid
               </h3>

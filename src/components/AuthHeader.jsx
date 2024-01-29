@@ -1,4 +1,7 @@
+import { GoogleLogin } from '@react-oauth/google';
+
 export const AuthHeader = () => {
+        //<GoogleLogin onSuccess={() => console.log("success")} onError={() => console.log("Fail")} />
   return (
     <div className="flex flex-col gap-6 w-full justify-center items-center p-4 pb-8 relative">
       <div className="w-20 h-20 ">

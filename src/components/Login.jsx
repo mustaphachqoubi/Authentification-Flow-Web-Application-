@@ -1,10 +1,10 @@
 import { Label } from "./Label.jsx";
 import { useDispatch } from "react-redux";
 import { setAuthType } from "../redux/authTypeSlice.js";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import axios from "axios";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ export const Login = () => {
   const onSubmit = async (values) => {
       setLoader(true)
     try {
-      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signin", values);
+      const res = await axios.post("http://localhost:2000/auth/signin", values);
       signIn({
         auth: {
           token: res.data.token,

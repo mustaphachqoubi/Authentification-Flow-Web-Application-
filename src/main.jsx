@@ -10,10 +10,12 @@ import { Contacts } from "./components/Contacts.jsx";
 import AuthProvider from "react-auth-kit";
 import { authstore } from "./auth/store.js";
 import RequireAuth from "@auth-kit/react-router/RequireAuth";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
+      <GoogleOAuthProvider clientId="321062429347-6d6gus6be9dneua974s8h4le4sle60cm.apps.googleusercontent.com">
       <AuthProvider store={authstore}>
         <BrowserRouter>
           <Routes>
@@ -31,6 +33,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           </Routes>
         </BrowserRouter>
       </AuthProvider>
+            </GoogleOAuthProvider>
+
     </Provider>
   </React.StrictMode>
 );

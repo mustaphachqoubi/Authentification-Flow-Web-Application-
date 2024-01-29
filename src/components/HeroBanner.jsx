@@ -10,9 +10,9 @@ export const HeroBanner = () => {
 
     for (let i = 0; i < 4; i++) {
       sliders.push(
-        <div className="w-full h-52 flex justify-start items-center gap-3 p-4 relative whitespace-nowrap rotate-12">
+        <div key={i} className="w-full h-52 flex justify-start items-center gap-3 p-4 relative whitespace-nowrap rotate-12">
           {Pics.map((pic, index) => (
-            <div key={index} className="w-full h-full relative flex justify-center items-center">
+            <div key={pic.id} className="w-full h-full relative flex justify-center items-center">
               <img
                 className="min-w-52 h-full rounded-lg slider bg-[#e80041] z-50"
                 src={pic.url}
