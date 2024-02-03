@@ -30,30 +30,39 @@ export const Login = () => {
     e.preventDefault();
   };
 
-  const getCookie = (name) => {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.startsWith(`${name}=`)) {
-        const value = cookie.substring(name.length + 1);
-        return decodeURIComponent(value);
-      }
-    }
-    return null;
-  };
-
   const onSubmit = async (values, { setFieldValue }) => {
     setLoader(true);
     try {
-      const deviceUUID = uuidv4();
-      localStorage.setItem("deviceUUID", deviceUUID);
-      console.log(localStorage.getItem("deviceUUID"));
+       const deviceUUID = uuidv4();
+      !localStorage.getItem("deviceUUID") && localStorage.setItem("deviceUUID", deviceUUID)
+      console.log(localStorage.getItem("deviceUUID"))
       const res = await axios.post("http://localhost:2000/auth/signin", {
         Email: values.Email,
         Password: values.Password,
         deviceUUID: localStorage.getItem("deviceUUID"),
       });
-      signIn({
+
+      if(res.data.message === "no uuid"){
+        console.log("no uuid")
+      }else{
+        const existingSession = res.data.user.Sessions.find(
+        (session) => session.deviceUUID === deviceUUID
+      );
+
+        if (existingSession) {
+        console.log("You are in the same device");
+      } else {
+        console.log("You logged in a new device");
+      }
+
+              }
+
+      /*
+       *const deviceUUID = uuidv4();
+      localStorage.setItem("deviceUUID", deviceUUID);
+        console.log("uuid found")
+
+       * signIn({
         auth: {
           token: res.data.token,
           type: "Bearer",
@@ -62,7 +71,7 @@ export const Login = () => {
           Email: values.Email,
           deviceUUID: localStorage.setItem("deviceUUID", deviceUUID),
         },
-      });
+      });*/
       setLoader(false);
       setPasswordStatus("success");
       setEmailStatus("success");

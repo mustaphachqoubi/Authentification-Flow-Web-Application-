@@ -31,6 +31,7 @@ router.post("/signin", async (req, res) => {
   try {
     const { Email, Password, deviceUUID } = req.body;
     const user = await User.findOne({ Email });
+    console.log(deviceUUID);
 
     if (!user) {
       return res.status(401).json({ error: "There is no such email" });
@@ -50,7 +51,11 @@ router.post("/signin", async (req, res) => {
       }
     );
 
-    console.log(deviceUUID)
+    if (!deviceUUID) {
+     return res.status(200).json({ message: "no uuid" }) 
+    } else{
+      return res.status(200).json({ message: "found uuid" }) 
+    }
 
     res.status(200).json({ token, user });
   } catch (error) {
