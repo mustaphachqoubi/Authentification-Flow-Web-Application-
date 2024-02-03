@@ -7,7 +7,7 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -31,37 +31,45 @@ export const Login = () => {
   };
 
   const getCookie = (name) => {
-    const cookies = document.cookie.split(';')
-    for(let i=0; i<cookies.length; i++){
-      const cookie = cookies[i].trim()
-      if(cookie.startsWith(`${name}=`)){
-        const value = cookie.substring(name.length + 1)
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(`${name}=`)) {
+        const value = cookie.substring(name.length + 1);
         return decodeURIComponent(value);
       }
     }
-    return null
-  }
+    return null;
+  };
 
-  const onSubmit = async (values) => {
-      setLoader(true)
+  const onSubmit = async (values, { setFieldValue }) => {
+    setLoader(true);
     try {
-      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signin", values);
+      const deviceUUID = uuidv4();
+      localStorage.setItem("deviceUUID", deviceUUID);
+      console.log(localStorage.getItem("deviceUUID"));
+      const res = await axios.post("http://localhost:2000/auth/signin", {
+        Email: values.Email,
+        Password: values.Password,
+        deviceUUID: localStorage.getItem("deviceUUID"),
+      });
       signIn({
         auth: {
           token: res.data.token,
           type: "Bearer",
         },
-        userState: { Email: values.Email },
+        userState: {
+          Email: values.Email,
+          deviceUUID: localStorage.setItem("deviceUUID", deviceUUID),
+        },
       });
-      const userEmail = getCookie('_auth');
-      setLoader(false)
+      setLoader(false);
       setPasswordStatus("success");
       setEmailStatus("success");
       navigate("/home");
-      console.log(res.data)
-      console.log(userEmail)
+      console.log(res.data);
     } catch (err) {
-      setLoader(false)
+      setLoader(false);
       err.response.data.error === "wrong password" && setPasswordStatus("fail");
       err.response.data.error === "There is no such email" &&
         setEmailStatus("fail");

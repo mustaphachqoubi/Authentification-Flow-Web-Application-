@@ -50,26 +50,7 @@ router.post("/signin", async (req, res) => {
       }
     );
 
-    if (user.Sessions.length < 1) {
-      const newDeviceUUID = uuidv4();
-      user.Sessions.push({ token: token, deviceUUID: newDeviceUUID });
-      await user.save();
-      console.log("Generated uuid");
-    } else {
-      console.log("Sessions not empty");
-      const existingSession = user.Sessions.find(
-        (session) => session.deviceUUID === deviceUUID
-      );
-
-      if (existingSession) {
-        console.log("You are in the same device");
-      } else {
-        console.log("You logged in a new device");
-        const newDeviceUUID = uuidv4();
-        user.Sessions.push({ token: token, deviceUUID: newDeviceUUID });
-        await user.save();
-      }
-    }
+    console.log(deviceUUID)
 
     res.status(200).json({ token, user });
   } catch (error) {
@@ -77,7 +58,6 @@ router.post("/signin", async (req, res) => {
     res.status(500).json({ error: "Login failed" });
   }
 });
-
 
 // User signOut
 router.post("/signout", async (req, res) => {

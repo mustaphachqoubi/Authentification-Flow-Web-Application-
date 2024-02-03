@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 export const Home = () => {
   const signOut = useSignOut();
   const navigate = useNavigate();
-  const logOut = () => {
+  const logOut = async () => {
+
     signOut();
     navigate("/");
   };
