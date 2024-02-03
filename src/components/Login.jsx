@@ -33,29 +33,15 @@ export const Login = () => {
   const onSubmit = async (values, { setFieldValue }) => {
     setLoader(true);
     try {
-       const deviceUUID = uuidv4();
-      !localStorage.getItem("deviceUUID") && localStorage.setItem("deviceUUID", deviceUUID)
-      console.log(localStorage.getItem("deviceUUID"))
+      const deviceUUID = uuidv4();
+      !localStorage.getItem("deviceUUID") &&
+        localStorage.setItem("deviceUUID", deviceUUID);
       const res = await axios.post("http://localhost:2000/auth/signin", {
         Email: values.Email,
         Password: values.Password,
         deviceUUID: localStorage.getItem("deviceUUID"),
       });
 
-      if(res.data.message === "no uuid"){
-        console.log("no uuid")
-      }else{
-        const existingSession = res.data.user.Sessions.find(
-        (session) => session.deviceUUID === deviceUUID
-      );
-
-        if (existingSession) {
-        console.log("You are in the same device");
-      } else {
-        console.log("You logged in a new device");
-      }
-
-              }
 
       /*
        *const deviceUUID = uuidv4();

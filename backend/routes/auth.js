@@ -52,9 +52,29 @@ router.post("/signin", async (req, res) => {
     );
 
     if (!deviceUUID) {
-     return res.status(200).json({ message: "no uuid" }) 
-    } else{
-      return res.status(200).json({ message: "found uuid" }) 
+      return res.status(200).json({ message: "no uuid" });
+    } else {
+      if (user.Sessions.length < 1) {
+        user.Sessions.push({ token: token, deviceUUID: deviceUUID });
+        await user.save();
+        console.log("Generated uuid");
+      } else {
+        console.log("Sessions not empty");
+        
+        const existingSession = user.Sessions.some(
+        (session) => session.deviceUUID === deviceUUID
+      );
+
+      if (existingSession) {
+        console.log("You are in the same device");
+      }else{
+          user.Sessions.push({ token: token, deviceUUID: deviceUUID });
+        await user.save();
+        console.log("You are in a new device");
+        }
+
+
+      }
     }
 
     res.status(200).json({ token, user });
