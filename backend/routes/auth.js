@@ -5,6 +5,7 @@ const ForgetPassword = require("./ForgetPassword");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailjs = require("@emailjs/nodejs");
+const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
 
@@ -17,7 +18,6 @@ router.post("/signup", async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(Password, 10);
     const user = new User({ Username, Email, Password: hashedPassword });
-    console.log(user);
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -26,16 +26,20 @@ router.post("/signup", async (req, res) => {
 });
 
 // User login
+
 router.post("/signin", async (req, res) => {
   try {
-    const { Email, Password } = req.body;
+    const { Email, Password, deviceUUID } = req.body;
     const user = await User.findOne({ Email });
+
     if (!user) {
       return res.status(401).json({ error: "There is no such email" });
     }
+
     const passwordMatch = await bcrypt.compare(Password, user.Password);
+
     if (!passwordMatch) {
-      return res.status(401).json({ error: "wrong password" });
+      return res.status(401).json({ error: "Wrong password" });
     }
 
     const token = jwt.sign(
@@ -45,9 +49,57 @@ router.post("/signin", async (req, res) => {
         expiresIn: "1h",
       }
     );
-    res.status(200).json({ token });
+
+    if (user.Sessions.length < 1) {
+      const newDeviceUUID = uuidv4();
+      user.Sessions.push({ token: token, deviceUUID: newDeviceUUID });
+      await user.save();
+      console.log("Generated uuid");
+    } else {
+      console.log("Sessions not empty");
+      const existingSession = user.Sessions.find(
+        (session) => session.deviceUUID === deviceUUID
+      );
+
+      if (existingSession) {
+        console.log("You are in the same device");
+      } else {
+        console.log("You logged in a new device");
+        const newDeviceUUID = uuidv4();
+        user.Sessions.push({ token: token, deviceUUID: newDeviceUUID });
+        await user.save();
+      }
+    }
+
+    res.status(200).json({ token, user });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Login failed" });
+  }
+});
+
+
+// User signOut
+router.post("/signout", async (req, res) => {
+  try {
+    const { Email, deviceUUID } = req.body;
+
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.Sessions = user.Sessions.filter(
+      (session) => session.deviceUUID !== deviceUUID
+    );
+
+    await user.save();
+
+    res.status(200).json({ message: "successfull logout", user });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "logout failed" });
   }
 });
 
@@ -69,24 +121,24 @@ router.post("/forgetpassword/email", async (req, res) => {
       { new: true }
     );
 
-    emailjs.send(
-      "service_tw474m5",
-      "template_a6sps07",
-      { Username: updatedUser.Username, Code: updatedUser.Code, Email: updatedUser.Email },
-      {
-        publicKey: "oqImZpAIUPtDbRdJS",
-        privateKey: "IG7ti-qjHbRy2NXOewbDK",
-      }
-    )  .then(
-    (response) => {
-    }
-  )
-  .catch(
-    (error) => {
-          console.log(error.text)
-    }
-  )
-    ;
+    emailjs
+      .send(
+        "service_tw474m5",
+        "template_a6sps07",
+        {
+          Username: updatedUser.Username,
+          Code: updatedUser.Code,
+          Email: updatedUser.Email,
+        },
+        {
+          publicKey: "oqImZpAIUPtDbRdJS",
+          privateKey: "IG7ti-qjHbRy2NXOewbDK",
+        }
+      )
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error.text);
+      });
 
     const token = jwt.sign(
       { id: updatedUser._id, email: updatedUser.Email },

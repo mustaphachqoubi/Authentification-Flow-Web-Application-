@@ -15,7 +15,7 @@ function App() {
   return (
     <div className="overflow-hidden font-sans flex justify-end items-center h-full md:h-screen flex-col md:flex-row">
       <div
-        className="bg-black/30 backdrop-blur-xl overflow-scroll md:bg-white flex justify-center items-center w-full h-full md:w-[50vw] lg:w-[40vw] xl:w-[30vw] z-50
+        className="bg-black/30 backdrop-blur-3xl overflow-scroll md:bg-white flex justify-center items-center w-full h-full md:w-[50vw] lg:w-[40vw] xl:w-[30vw] z-50
         absolute top-0 left-0 self-end flex-col divide-y gap-2 p-8"
       >
         <AuthHeader />

@@ -8,6 +8,10 @@
   box-sizing: border-box;
 }
 
+.shadow{
+  box-shadow: 15px 15px 35px black;
+}
+
 .slider{
   animation: scroll 15s linear infinite;
 }

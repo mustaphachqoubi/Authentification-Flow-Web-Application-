@@ -7,6 +7,7 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,18 @@ export const Login = () => {
     e.preventDefault();
   };
 
+  const getCookie = (name) => {
+    const cookies = document.cookie.split(';')
+    for(let i=0; i<cookies.length; i++){
+      const cookie = cookies[i].trim()
+      if(cookie.startsWith(`${name}=`)){
+        const value = cookie.substring(name.length + 1)
+        return decodeURIComponent(value);
+      }
+    }
+    return null
+  }
+
   const onSubmit = async (values) => {
       setLoader(true)
     try {
@@ -40,10 +53,13 @@ export const Login = () => {
         },
         userState: { Email: values.Email },
       });
+      const userEmail = getCookie('_auth');
       setLoader(false)
       setPasswordStatus("success");
       setEmailStatus("success");
       navigate("/home");
+      console.log(res.data)
+      console.log(userEmail)
     } catch (err) {
       setLoader(false)
       err.response.data.error === "wrong password" && setPasswordStatus("fail");
