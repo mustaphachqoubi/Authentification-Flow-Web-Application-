@@ -45,7 +45,7 @@ export const Login = () => {
   const onSubmit = async (values) => {
       setLoader(true)
     try {
-      const res = await axios.post("http://localhost:2000/auth/signin", values);
+      const res = await axios.post("https://auth-9xaz.onrender.com/auth/signin", values);
       signIn({
         auth: {
           token: res.data.token,
