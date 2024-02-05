@@ -17,8 +17,54 @@ export const Home = () => {
   const [code, setCode] = useState(null);
 
   const logOut = async () => {
+    try{
+    const res = await axios.post("http://localhost:2000/auth/sessions", {
+        Email: localStorage.getItem("Email"),
+      });
+
+      if (res.data.user.Sessions.length > 1) {
+        try {
+      const res = await axios.post("http://localhost:2000/auth/logout", {
+        Email: localStorage.getItem("Email"),
+        deviceUUID: localStorage.getItem("deviceUUID"),
+      });
+          console.log(res)
+    } catch (error) {
+      console.log(error);
+    }
+      }else{
+
+        try{
+          const res = await axios.post("http://localhost:2000/auth/freshsessions", {
+        Email: localStorage.getItem("Email"),
+      });
+          console.log(res)
+        } catch(error){
+          console.log(error)
+        }
+
+      }
+
+
     signOut();
     navigate("/");
+
+/*          if (res.data.user.Sessions.length > 1) {}
+      else{
+      try{
+          const res = await axios.post("http://localhost:2000/auth/freshsessions", {
+        Email: localStorage.getItem("Email"),
+      });
+          console.log(res)
+        } catch(error){
+          console.log(error)
+        }
+    }
+      */
+
+    } catch (error){
+      console.log(error)
+    }
   };
 
   const getSessions = async () => {

@@ -25,6 +25,9 @@ dependencies:
   express-session:
     specifier: ^1.18.0
     version: 1.18.0
+  fingerprintjs2:
+    specifier: ^2.1.4
+    version: 2.1.4
   jsonwebtoken:
     specifier: ^9.0.2
     version: 9.0.2
@@ -514,6 +517,11 @@ packages:
       unpipe: 1.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /fingerprintjs2@2.1.4:
+    resolution: {integrity: sha512-veP2yVsnYvjDVkzZMyIEwpqCAQfsBLH+U4PK5MlFAnLjZrttbdRqEArE1fPcnJFz5oS5CrdONbsV7J6FGpIJEQ==}
+    deprecated: Package has been renamed to @fingerprintjs/fingerprintjs. Install @fingerprintjs/fingerprintjs to get updates.
     dev: false
 
   /forwarded@0.2.0:

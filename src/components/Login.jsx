@@ -32,15 +32,19 @@ export const Login = () => {
 
   const onSubmit = async (values) => {
     setLoader(true);
+    console.log(localStorage.getItem("deviceUUID") )
     try {
       const deviceUUID = uuidv4();
       !localStorage.getItem("deviceUUID") &&
         localStorage.setItem("deviceUUID", deviceUUID);
+
       const res = await axios.post("http://localhost:2000/auth/signin", {
         Email: values.Email,
         Password: values.Password,
         deviceUUID: localStorage.getItem("deviceUUID"),
       });
+
+      console.log(res)
 
       signIn({
         auth: {
@@ -60,6 +64,7 @@ export const Login = () => {
       navigate("/home");
       console.log(res.data);
     } catch (err) {
+      console.log("error:", err)
       setLoader(false);
       err.response.data.error === "wrong password" && setPasswordStatus("fail");
       err.response.data.error === "There is no such email" &&

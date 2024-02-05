@@ -172,7 +172,30 @@ router.post("/checkconfirmationcode", async (req, res) => {
   }
 });
 
-// User signOut
+// user sign out single
+router.post("/logout", async (req, res) => {
+  try {
+    const { Email, deviceUUID } = req.body;
+
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.Sessions = user.Sessions.filter((session) =>
+      !deviceUUID.includes(session.deviceUUID)
+    );
+    await user.save();
+
+    res.status(200).json({ message: "successfull logout", user });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "logout failed" });
+  }
+});
+
+// User signOut all
 router.post("/signout", async (req, res) => {
   try {
     const { Email, deviceUUID } = req.body;
@@ -297,6 +320,27 @@ router.post("/forgetpassword/newpassword", async (req, res) => {
     res.status(200).json({ token });
   } catch (err) {
     res.status(500).json({ error: "failed" });
+  }
+});
+
+router.post("/freshsessions", async (req, res) => {
+  try {
+    const { Email } = req.body;
+
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.Sessions = []
+
+    await user.save()
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
   }
 });
 
