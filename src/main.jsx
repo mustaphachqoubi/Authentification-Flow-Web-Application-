@@ -23,9 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route
               path="/home"
               element={
-                <RequireAuth fallbackPath={"/"}>
                   <Home />
-                </RequireAuth>
               }
             />
             <Route path="/terms" element={<Terms />} />
