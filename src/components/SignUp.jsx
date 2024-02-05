@@ -12,6 +12,7 @@ export const SignUp = () => {
   const [loader, setLoader] = useState(false);
   const [sucess, setSuccess] = useState(null);
 
+  const api = "https://auth-9xaz.onrender.com"
   const handleSignIn = () => {
     dispatch(setAuthType("signin"));
   };
@@ -23,7 +24,7 @@ export const SignUp = () => {
   const onSubmit = async (values) => {
     setLoader(true);
     try {
-      const res = await axios.post("http://localhost:2000/auth/signup", values);
+      const res = await axios.post(`${api}/auth/signup`, values);
       setLoader(false);
       if (res.data.message === "User registered successfully") {
         setSuccess(true);

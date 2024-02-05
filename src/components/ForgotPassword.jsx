@@ -9,6 +9,7 @@ import axios from "axios";
 export const ForgotPassword = () => {
   const dispatch = useDispatch();
 
+  const api = "https://auth-9xaz.onrender.com"
   const handleSignIn = () => {
     dispatch(setAuthType("signin"));
   };
@@ -24,7 +25,7 @@ export const ForgotPassword = () => {
     if (step === 1) {
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/email",
+          `${api}/auth/forgetpassword/email`,
           values
         );
             setLoader(false)
@@ -45,7 +46,7 @@ export const ForgotPassword = () => {
       );
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/code",
+          `${api}/auth/forgetpassword/code`,
           { Email: values.Email, Code: combinedCode }
         );
             setLoader(false)
@@ -60,7 +61,7 @@ export const ForgotPassword = () => {
     if (step === 3) {
       try {
         const res = await axios.post(
-          "http://localhost:2000/auth/forgetpassword/newpassword",
+          `${api}/auth/forgetpassword/newpassword`,
           { Email: values.Email, Password: values.Password }
         );
             setLoader(false)

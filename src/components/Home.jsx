@@ -16,15 +16,17 @@ export const Home = () => {
   const [checkBtnDisplay, setCheckBtnDisplay] = useState("hidden");
   const [code, setCode] = useState(null);
 
+  const api = "https://auth-9xaz.onrender.com"
+
   const logOut = async () => {
     try{
-    const res = await axios.post("http://localhost:2000/auth/sessions", {
+    const res = await axios.post(`${api}/auth/sessions`, {
         Email: localStorage.getItem("Email"),
       });
 
       if (res.data.user.Sessions.length > 1) {
         try {
-      const res = await axios.post("http://localhost:2000/auth/logout", {
+      const res = await axios.post(`${api}/auth/logout`, {
         Email: localStorage.getItem("Email"),
         deviceUUID: localStorage.getItem("deviceUUID"),
       });
@@ -35,7 +37,7 @@ export const Home = () => {
       }else{
 
         try{
-          const res = await axios.post("http://localhost:2000/auth/freshsessions", {
+          const res = await axios.post(`${api}/auth/freshsessions`, {
         Email: localStorage.getItem("Email"),
       });
           console.log(res)
@@ -45,22 +47,9 @@ export const Home = () => {
 
       }
 
-
     signOut();
     navigate("/");
 
-/*          if (res.data.user.Sessions.length > 1) {}
-      else{
-      try{
-          const res = await axios.post("http://localhost:2000/auth/freshsessions", {
-        Email: localStorage.getItem("Email"),
-      });
-          console.log(res)
-        } catch(error){
-          console.log(error)
-        }
-    }
-      */
 
     } catch (error){
       console.log(error)
@@ -69,7 +58,7 @@ export const Home = () => {
 
   const getSessions = async () => {
     try {
-      const res = await axios.post("http://localhost:2000/auth/sessions", {
+      const res = await axios.post(`${api}/auth/sessions`, {
         Email: localStorage.getItem("Email"),
       });
 
@@ -98,7 +87,7 @@ export const Home = () => {
   const sendConfirmationCode = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:2000/auth/confirmaccount",
+        `${api}/auth/confirmaccount`,
         {
           Email: localStorage.getItem("Email"),
         }
@@ -118,7 +107,7 @@ export const Home = () => {
     console.log(code);
     try {
       const res = await axios.post(
-        "http://localhost:2000/auth/checkconfirmationcode",
+        `${api}/auth/checkconfirmationcode`,
         {
           Email: localStorage.getItem("Email"),
           Code: code,
@@ -141,7 +130,7 @@ export const Home = () => {
 
   const removeUUID = async () => {
     try {
-      const res = await axios.post("http://localhost:2000/auth/signout", {
+      const res = await axios.post(`${api}/auth/signout`, {
         Email: localStorage.getItem("Email"),
         deviceUUID: localStorage.getItem("deviceUUID"),
       });

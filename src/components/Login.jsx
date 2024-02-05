@@ -18,6 +18,8 @@ export const Login = () => {
   const [passwordStatus, setPasswordStatus] = useState("");
   const [loader, setLoader] = useState(false);
 
+  const api = "https://auth-9xaz.onrender.com"
+
   const handleSignIn = () => {
     dispatch(setAuthType("signup"));
   };
@@ -38,7 +40,7 @@ export const Login = () => {
       !localStorage.getItem("deviceUUID") &&
         localStorage.setItem("deviceUUID", deviceUUID);
 
-      const res = await axios.post("http://localhost:2000/auth/signin", {
+      const res = await axios.post(`${api}/auth/signin`, {
         Email: values.Email,
         Password: values.Password,
         deviceUUID: localStorage.getItem("deviceUUID"),
