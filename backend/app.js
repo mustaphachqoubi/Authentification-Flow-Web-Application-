@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const uri = process.env.MONGODB_URI;
 const port = process.env.PORT;
 const cors = require("cors");
+const WebSocket = require("ws");
 
 const authRoutes = require("./routes/auth");
 const protectedRoute = require("./routes/protectedRoute");

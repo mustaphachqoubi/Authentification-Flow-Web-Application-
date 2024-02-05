@@ -1,11 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
-const ForgetPassword = require("./ForgetPassword");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailjs = require("@emailjs/nodejs");
-const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
 
@@ -26,7 +24,6 @@ router.post("/signup", async (req, res) => {
 });
 
 // User login
-
 router.post("/signin", async (req, res) => {
   try {
     const { Email, Password, deviceUUID } = req.body;
@@ -60,20 +57,18 @@ router.post("/signin", async (req, res) => {
         console.log("Generated uuid");
       } else {
         console.log("Sessions not empty");
-        
+
         const existingSession = user.Sessions.some(
-        (session) => session.deviceUUID === deviceUUID
-      );
+          (session) => session.deviceUUID === deviceUUID
+        );
 
-      if (existingSession) {
-        console.log("You are in the same device");
-      }else{
+        if (existingSession) {
+          console.log("You are in the same device");
+        } else {
           user.Sessions.push({ token: token, deviceUUID: deviceUUID });
-        await user.save();
-        console.log("You are in a new device");
+          await user.save();
+          console.log("Your account is logged in other device");
         }
-
-
       }
     }
 
@@ -81,6 +76,99 @@ router.post("/signin", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Login failed" });
+  }
+});
+
+router.post("/sessions", async (req, res) => {
+  try {
+    const { Email } = req.body;
+
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+// confirm account owner
+router.post("/confirmaccount", async (req, res) => {
+  try {
+    const { Email } = req.body;
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(401).json({ error: "no user" });
+    }
+
+    const code = Math.floor(Math.random() * 9000 + 1000);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $set: { Code: code } },
+      { new: true }
+    );
+
+    emailjs
+      .send(
+        "service_tw474m5",
+        "template_a6sps07",
+        {
+          Username: updatedUser.Username,
+          Code: updatedUser.Code,
+          Email: updatedUser.Email,
+        },
+        {
+          publicKey: "oqImZpAIUPtDbRdJS",
+          privateKey: "IG7ti-qjHbRy2NXOewbDK",
+        }
+      )
+      .then((response) => {
+        return res.status(200).json({ response });
+      })
+      .catch((error) => {});
+
+    const token = jwt.sign(
+      { id: updatedUser._id, email: updatedUser.Email },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ user: updatedUser, token });
+  } catch (err) {
+    res.status(500).json({ error: "failed" });
+  }
+});
+
+// forget password code
+router.post("/checkconfirmationcode", async (req, res) => {
+  try {
+    const { Email, Code } = req.body;
+
+    const user = await User.findOne({ Email });
+
+    if (!user) {
+      return res.status(401).json({ error: "no user" });
+    }
+
+    if (user.Code != Code) {
+      console.log("false");
+      return res.status(401).json({ error: "incorrect code" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.Email },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+    res.status(200).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: "failed" });
   }
 });
 
@@ -95,10 +183,9 @@ router.post("/signout", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    user.Sessions = user.Sessions.filter(
-      (session) => session.deviceUUID !== deviceUUID
+    user.Sessions = user.Sessions.filter((session) =>
+      deviceUUID.includes(session.deviceUUID)
     );
-
     await user.save();
 
     res.status(200).json({ message: "successfull logout", user });

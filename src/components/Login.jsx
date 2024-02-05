@@ -30,7 +30,7 @@ export const Login = () => {
     e.preventDefault();
   };
 
-  const onSubmit = async (values, { setFieldValue }) => {
+  const onSubmit = async (values) => {
     setLoader(true);
     try {
       const deviceUUID = uuidv4();
@@ -42,22 +42,18 @@ export const Login = () => {
         deviceUUID: localStorage.getItem("deviceUUID"),
       });
 
-
-      /*
-       *const deviceUUID = uuidv4();
-      localStorage.setItem("deviceUUID", deviceUUID);
-        console.log("uuid found")
-
-       * signIn({
+      signIn({
         auth: {
           token: res.data.token,
           type: "Bearer",
         },
         userState: {
           Email: values.Email,
-          deviceUUID: localStorage.setItem("deviceUUID", deviceUUID),
+          deviceUUID: localStorage.getItem("deviceUUID"),
         },
-      });*/
+      });
+
+      localStorage.setItem("Email", values.Email)
       setLoader(false);
       setPasswordStatus("success");
       setEmailStatus("success");
